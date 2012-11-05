@@ -48,8 +48,8 @@ function contractStream (fee, attritionRate, renewalRate, contractLength, months
         var cancelRate = 1 - renewalRate;
         for(var i = 0; i < months; i++)
         {
-                if(contractLength % i == 0 && i != 0 && Math.random() < cancelRate)
-                // contractLength % i == 0 means that the month is a renewal month
+                if(i % contractLength == 0 && i != 0 && Math.random() < cancelRate)
+                // i % contractLength == 0 means that the month is a renewal month
                 // i != 0 just means that the zeroth month is not considered a
                 // renewal month
                 // Math.random() < cancelRate means that the customer canceled
