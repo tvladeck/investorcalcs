@@ -76,3 +76,41 @@ function contractStream (fee, attritionRate, renewalRate, contractLength, months
 
         return feeVector;
 }
+
+function simulateDeals (N, upfrontCost, paybackMonths, attritionRate, 
+                        renewalRate, contractLength, months)
+{
+        var totalUpfront = N * upfrontCost;
+        var fee = upfrontCost / paybackMonths;
+        var revenueStream = [];
+        for (var i = 0; i < months; i++) { revenueStream.push(0); }
+
+        for (var i = 0; i < N; i++)
+        {
+                feeVector = contractStream(fee, attritionRate, renewalRate, contractLength, months);
+                for (var j = 0; j < months; j++)
+                {
+                        revenueStream[j] += feeVector[j];
+                }
+        }
+
+        var totalRevenue = 0;
+        for (var i = 0; i < months; i++)
+        {
+                totalRevenue += revenueStream[i];
+        }
+
+        var totalVector = revenueStream;
+        totalVector.unshift(-totalUpfront);
+        var irr = irr(totalVector);
+
+        var result =
+        {
+                capex: totalUpfront,
+                irr: irr,
+                stream: revenueStream,
+                totalRevenue: totalRevenue
+        };
+
+        return result;
+}
