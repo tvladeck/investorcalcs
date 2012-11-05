@@ -34,7 +34,7 @@ var upfrontCost,    // the amount we pay for lights upfront
     months;         // number of months to run analysis for
 
 function contractStream (fee, attritionRate, renewalRate, contractLength, months)
-// Args: 
+// Args:
 //  fee: monthly fee from the customer
 //  attritionRate: probability in a given month that the customer will default
 //  renewalRate: probability that the customer will renew her contract
@@ -68,7 +68,7 @@ function contractStream (fee, attritionRate, renewalRate, contractLength, months
                 }
         }
 
-        for(var i = feeVector.length; i < months, i++)
+        for(var i = feeVector.length; i < months; i++)
         // all this does is add zeroes s.t. the feeVector is the right length
         {
                 feeVector.push(0);
