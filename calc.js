@@ -169,7 +169,7 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
                 var numDeals = dealsPerSalesperson * salespeople;
 
                 var monthsAhead = totalMonths - i; // this is the number of months that each set of deals will last for
-                var simulation = simulateDeals(numdeals, upfrontCost, paybackMonths, attritionRate,
+                var simulation = simulateDeals(numDeals, upfrontCost, paybackMonths, attritionRate,
                                                renewalRate, contractLength, monthsAhead);
 
                 capex.push(simulation.capex);
@@ -191,9 +191,11 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
         {
                 capex: capex,
                 revenues: revenues,
-                salaries: salaies
+                salaries: salaries
         };
 
         return result;
 }
 
+
+simulateBusiness(100, 12, 0.002, 0.8, 24, 36, 12, 1, 6, 2, 5, 100, 10, 100)
