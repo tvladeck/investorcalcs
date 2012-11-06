@@ -146,7 +146,7 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
         var revenues = [];
         var capex    = [];
         var salaries = [];
-        var projects = [];
+        var profit   = [];
         var salespeople = initialSalespeople;
         var opspeople   = Math.floor(initialSalespeople / salesToOps);
         var totalMonths = stopMonths + padMonths;
@@ -186,16 +186,22 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
                         revenues[j] += revs[j];
                 }
         }
+	
 
-				for(var i = 0; i < totalMonths; i++)
-				{
-								profit[i] = revenues[i] - salaries[i];
-				}
+	for(var i = 0; i < padMonths; i++)
+	{
+		salaries.push(0);
+	}
+	
+	for(var i = 0; i < totalMonths; i++)
+	{
+		profit[i] = revenues[i] - salaries[i];
+	}	
 
         var result =
         {
                 capex: capex,
-								profit: profit,
+		profit: profit,
                 revenues: revenues,
                 salaries: salaries
         };
