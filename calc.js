@@ -187,9 +187,15 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
                 }
         }
 
+				for(var i = 0; i < totalMonths; i++)
+				{
+								profit[i] = revenues[i] - salaries[i];
+				}
+
         var result =
         {
                 capex: capex,
+								profit: profit,
                 revenues: revenues,
                 salaries: salaries
         };
