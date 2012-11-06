@@ -189,9 +189,9 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
 
         var result =
         {
-                capex = capex,
-                revenues = revenues,
-                salaries = salaies
+                capex: capex,
+                revenues: revenues,
+                salaries: salaies
         };
 
         return result;
