@@ -33,11 +33,7 @@ function simulateDeals (N, upfrontCost, paybackMonths, attritionRate,
         var result =
         {
                 capex: totalUpfront,
-                irr: returns,
                 revenue: revenueStream,
-                cashflow: totalVector,
-                totalRevenue: totalRevenue,
-                projects: individualResults
         };
 
         return result;

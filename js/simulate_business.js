@@ -38,10 +38,13 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
         var salespeople = initialSalespeople;
         var opspeople   = Math.max(Math.floor(initialSalespeople / salesToOps), 1);
         var totalMonths = stopMonths + padMonths;
+        console.log("check 1");
         for(var i = 0; i < totalMonths; i++) { revenues.push(0); cashflow.push(0); }
 
+        console.log("check 2");
         for(var i = 0; i < stopMonths; i++)
         {
+                console.log("loop 1 check 1");
                 if(i % salesAddTiming == 0 && i != 0) 
                 // i % salesAddTiming means that it is a month where we add
                 // salespeople
@@ -51,17 +54,21 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
                         opspeople    = Math.max(Math.floor(salespeople / salesToOps), 1);
                 }
 
+                console.log("loop 1 check 2");
                 var salary = salespeople * salesSalary + opspeople * opsSalary;
                 salaries.push(salary);
 
+                console.log("loop 1 check 3");
                 var numDeals = dealsPerSalesperson * salespeople;
 
                 var monthsAhead = totalMonths - i; // this is the number of months that each set of deals will last for
-                var simulation = simulateDeals(numDeals, upfrontCost, paybackMonths, attritionRate,
-                                               renewalRate, contractLength, monthsAhead);
+                console.log("loop 1 check 3.1" + i);
+                var simulation = simulateDeals(numDeals, upfrontCost, paybackMonths, attritionRate, renewalRate, contractLength, monthsAhead);
 
+                console.log("loop 1 check 3.2");
                 capex.push(simulation.capex);
 
+                console.log("loop 1 check 4");
                 var revs = simulation.revenue;
                 for(var j = 0; j < i; j++)
                 // this just adds zeroes to the front of the revenue stream so
@@ -69,6 +76,7 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
                 {
                         revs.unshift(0);
                 }
+                console.log("loop 1 check 5");
                 for(var j = 0; j < totalMonths; j++)
                 {
                         revenues[j] += revs[j];
@@ -76,26 +84,29 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
         }
 
 
+        console.log("check 3");
         for(var i = 0; i < padMonths; i++)
         {
           salaries.push(0);
           capex.push(0);
         }
 
+        console.log("check 4");
         for(var i = 0; i < totalMonths; i++)
         {
           profit[i]   = revenues[i] - salaries[i];
-          cashflow[i] = revenues[i] - capex[i];
+          cashflow[i] = revenues[i] - capex[i] - salaries[i];
         }
 
 
+        console.log("check 5");
         var result =
         {
-                capex: capex,
-                profit: profit,
-                cashflow: cashflow,
-                revenues: revenues,
-                salaries: salaries
+                cap: capex,
+                pro: profit,
+                cas: cashflow,
+                rev: revenues,
+                sal: salaries
         };
 
         return result;
