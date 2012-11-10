@@ -23,8 +23,10 @@ function simulateDeals (N, upfrontCost, paybackMonths, attritionRate,
                 totalRevenue += revenueStream[i];
         }
 
-        var totalVector = revenueStream; // new variable to calculate IRR
-        totalVector.unshift(-totalUpfront); // need to add upfront cost
+        //need to use slice(0) so that a new object is created. otherwise
+        //unshift will affect both totalVector and revenueStream
+        var totalVector = revenueStream.slice(0); // new variable to calculate IRR
+        totalVector[0]  -= totalUpfront; // need to add upfront cost
         var returns = irr(totalVector);
         returns = Math.pow((1 + returns), 12) - 1; // convert monthly IRR to annual
 
@@ -32,7 +34,8 @@ function simulateDeals (N, upfrontCost, paybackMonths, attritionRate,
         {
                 capex: totalUpfront,
                 irr: returns,
-                stream: revenueStream,
+                revenue: revenueStream,
+                cashflow: totalVector,
                 totalRevenue: totalRevenue,
                 projects: individualResults
         };
