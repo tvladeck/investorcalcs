@@ -57,6 +57,7 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
 
                 var revs = simulation.revenue;
                 var cash = simulation.cashflow;
+                cash[0] -= salary;
                 for(var j = 0; j < i; j++)
                 // this just adds zeroes to the front of the revenue stream so
                 // that they are all the same length
