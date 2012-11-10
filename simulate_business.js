@@ -2,7 +2,7 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
                            renewalRate, contractLength, stopMonths,
                            padMonths, initialSalespeople, salesAddTiming,
                            salesAddNumber, dealsPerSalesperson,
-                           salesSalary, salesToOps, opsSalary)
+                           salesSalary, salesToOps, opsSalary) {
 // Args:
 //  upfrontCost: the upfront cost of a single deal
 //  paybackMonths: the number of months it takes for BH to get paid back under
@@ -20,8 +20,15 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
 //  dealsPerSalesperson: the number of deals per month per salesperson
 //  salesSalary: salary of a salesperson
 //  salesToOps: ratio of sales to operations people
-//  opsSalary: salary of ops people
-{
+//  opsSalary: salary of ops people;
+//
+// Returns: (object containing)
+//  profit: array of revenues - salaries
+//  cashflow: array of revenues - salaries - capex
+//  revenues: just revenues
+//  capex: just capex
+//  salaries: just salaries
+
         var attritionRate = 1 - Math.pow(1-attritionRate, 1/12); //convert annual to monthly #
         var revenues = [];
         var capex    = [];
@@ -56,19 +63,15 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
                 capex.push(simulation.capex);
 
                 var revs = simulation.revenue;
-                var cash = simulation.cashflow;
-                cash[0] -= salary;
                 for(var j = 0; j < i; j++)
                 // this just adds zeroes to the front of the revenue stream so
                 // that they are all the same length
                 {
                         revs.unshift(0);
-                        cash.unshift(0);
                 }
                 for(var j = 0; j < totalMonths; j++)
                 {
                         revenues[j] += revs[j];
-                        cashflow[j] += cash[j];
                 }
         }
 
@@ -76,12 +79,15 @@ function simulateBusiness (upfrontCost, paybackMonths, attritionRate,
         for(var i = 0; i < padMonths; i++)
         {
           salaries.push(0);
+          capex.push(0);
         }
 
         for(var i = 0; i < totalMonths; i++)
         {
-          profit[i] = revenues[i] - salaries[i];
+          profit[i]   = revenues[i] - salaries[i];
+          cashflow[i] = revenues[i] - capex[i];
         }
+
 
         var result =
         {
