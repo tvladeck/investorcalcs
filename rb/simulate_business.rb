@@ -84,7 +84,7 @@ module Projection
     end
 
     result = { :profit => profit, :cashflow => cashflow, :revenues => revenues,
-               :salaries => salaries, :opex => opex }
+               :salaries => salaries, :opex => opex, :capex => capex }
 
   end
 end
