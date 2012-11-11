@@ -72,9 +72,7 @@ class Projection
       opex_month = @opex_ratio * salary
       num_deals = @deals_per_sales * sales
       months_ahead = total_months - month
-      simulation = simulate_deals(num_deals, @upfront_cost, @payback_months,
-                                  @attrition_rate, @renewal_rate, @contract_length,
-                                  months_ahead)
+      simulation = simulate_deals(num_deals, months_ahead)
       capex << simulation[:capex]
       salaries << salary
       opex << opex_month
@@ -103,16 +101,14 @@ class Projection
                :salaries => salaries, :opex => opex, :capex => capex }
   end
 
-  def simulate_deals(n, upfront_cost, payback_months, attrition_rate,
-                     renewal_rate, contract_length, months)
-    total_upfront = n * upfront_cost
-    fee = upfront_cost / payback_months
+  def simulate_deals(n, months)
+    total_upfront = n * @upfront_cost
+    fee = @upfront_cost / @payback_months
     revenue_stream = []
     months.times do revenue_stream << 0 end
 
     n.times do |deal|
-      fee_vector = contract_stream(fee, attrition_rate, renewal_rate,
-                                   contract_length, months)
+      fee_vector = contract_stream(months)
       fee_vector.each_with_index do |fee, index|
         revenue_stream[index] += fee
       end
@@ -122,14 +118,14 @@ class Projection
     result
   end
 
-  def contract_stream(fee, attrition_rate, renewal_rate,
-                      contract_length, months)
+  def contract_stream(months)
+    fee = @upfront_cost / @payback_months
     fee_vector = []
-    cancel_rate = 1 - renewal_rate
+    cancel_rate = 1 - @renewal_rate
     months.times do |month|
-      if month % contract_length == 0 && month != 0 && Random.rand < cancel_rate
+      if month % @contract_length == 0 && month != 0 && Random.rand < cancel_rate
         break
-      elsif Random.rand < attrition_rate
+      elsif Random.rand < @attrition_rate
         break
       else
         fee_vector << fee
