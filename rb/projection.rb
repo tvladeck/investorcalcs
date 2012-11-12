@@ -38,10 +38,12 @@ class Projection
     @ops_sal              = options[:ops_sal] || 5000
     @opex_ratio           = options[:opex_ratio] || 0.25
     @lamp_replace_years   = options[:lamp_replace_years] || 5
+    @sales_step_rate      = options[:sales_step_rate] || 1
+    @sales_midpoint       = options[:sales_midpoint] || 50
   end
 
 
-  def simulate_business
+  def simulate_business(options={})
 ##
 ## Returns: (object containing)
 ##  profit: array of revenues - salaries
@@ -57,6 +59,7 @@ class Projection
     cashflow        = []
     opex            = []
     sales           = @initial_sales
+    sales_add_num   = @sales_add_num
     ops             = [1, (sales / @sales_to_ops).floor].max
     total_months    = @stop_months + @pad_months
     total_months.times do
@@ -68,8 +71,14 @@ class Projection
 
     @stop_months.times do |month|
       if month % @sales_add_timing == 0 && month != 0
-        sales += @sales_add_num
+        sales += sales_add_num
         ops   = [1, (sales / @sales_to_ops).floor].max
+        if sales < @sales_midpoint
+          sales_add_num += @sales_step_rate
+        elsif sales > @sales_midpoint
+          sales_add_num -= @sales_step_rate
+          sales_add_num = [sales_add_num, 0].max
+        end
       end
       salary = @sales_sal * sales + @ops_sal * ops
       opex_month = @opex_ratio * salary
@@ -103,7 +112,7 @@ class Projection
     end
 
     result = Simulation.new(revenues, cashflow, profit,
-                            capex, opex, salaries)
+                            capex, opex, salaries, options)
 
     result
   end
