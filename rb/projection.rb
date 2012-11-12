@@ -102,8 +102,10 @@ class Projection
       cashflow[m] = revenues[m] - capex[m] - salaries[m] - opex[m]
     end
 
-    result = { :profit => profit, :cashflow => cashflow, :revenues => revenues,
-               :salaries => salaries, :opex => opex, :capex => capex }
+    result = Simulation.new(revenues, cashflow, profit,
+                            capex, opex, salaries)
+
+    result
   end
 
   def simulate_deals(n, months)
@@ -134,6 +136,10 @@ class Projection
 
   def contract_stream(months)
     fee                 = @upfront_cost / @payback_months
+
+    # this formula converts an annual probability into a monthly one
+    # it's needed as it's easier to reason about yearly probabilities, but
+    # the formula needs a monthly number.
     attrition_rate      = 1 - ((1 - @attrition_rate) ** (1 / 12.0))
     lamp_replace_months = @lamp_replace_years * 12
     fee_vector          = []
