@@ -12,15 +12,26 @@ class Simulation
     self.salaries = salaries
     self.opex = opex
 
+    @min_valuation        = options[:min_valuation] || 1_000_000
     @multiple             = options[:multiple] || 10
     @init_investment      = options[:init_investment] || 250_000
     @invest_months_ahead  = options[:invest_months_ahead] || 6
     @initial_cash         = options[:initial_cash] || 50_000
   end
 
-  def valuation
+  def investment_percentages
+    invs = self.investments
+    vals = self.valuations
+    inv_vals = []
+    invs.each_with_index do |i, index|
+      inv_vals[index] = i.to_f / vals[index]
+    end
+    inv_vals
+  end
+
+  def valuations
     val = self.revenues.map do |r|
-      r * @multiple
+      [r * 12 * @multiple, @min_valuation].max
     end
     val
   end
@@ -67,6 +78,5 @@ class Simulation
     end
     inv
   end
-
 
 end
