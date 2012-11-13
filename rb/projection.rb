@@ -58,6 +58,7 @@ class Projection
     profit          = []
     cashflow        = []
     opex            = []
+    salesforce      = []
     sales           = @initial_sales
     sales_add_num   = @sales_add_num
     ops             = [1, (sales / @sales_to_ops).floor].max
@@ -87,6 +88,7 @@ class Projection
 
       salaries << salary
       opex << opex_month
+      salesforce << sales
 
       simulation = simulate_deals(num_deals, months_ahead)
       cap   = simulation[:capex]
@@ -102,8 +104,9 @@ class Projection
     end
 
     @pad_months.times do
-      salaries  << 0
-      opex      << 0
+      salaries    << 0
+      opex        << 0
+      salesforce  << 0
     end
 
     total_months.times do |m|
@@ -112,7 +115,7 @@ class Projection
     end
 
     result = Simulation.new(revenues, cashflow, profit,
-                            capex, opex, salaries, options)
+                            capex, opex, salaries, salesforce, options)
 
     result
   end

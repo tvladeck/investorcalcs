@@ -1,16 +1,17 @@
 class Simulation
 
   attr_accessor :capex, :revenues, :profit, :cashflow,
-                :salaries, :opex
+                :salaries, :opex, :salesforce
 
-  def initialize(revenues, cashflow, profit, capex, opex, salaries,
-                options = {})
+  def initialize(revenues, cashflow, profit, capex, opex, salaries, 
+                 salesforce, options = {})
     self.capex = capex
     self.revenues = revenues
     self.profit = profit
     self.cashflow = cashflow
     self.salaries = salaries
     self.opex = opex
+    self.salesforce = salesforce
 
     @min_valuation        = options[:min_valuation] || 1_000_000
     @multiple             = options[:multiple] || 10
@@ -22,9 +23,9 @@ class Simulation
   def investment_percentages
     invs = self.investments
     vals = self.valuations
-    inv_vals = []
-    invs.each_with_index do |i, index|
-      inv_vals[index] = i.to_f / vals[index]
+    inv_vals = {}
+    invs.map do |month, amount|
+      inv_vals[month] = amount.to_f / vals[month]
     end
     inv_vals
   end
@@ -39,9 +40,8 @@ class Simulation
   def investments
     # simply returns a vector of when investments are taken
     cash_tracker = @initial_cash + @init_investment
-    investments = []
+    investments = {}
     num_months = self.cashflow.length
-    num_months.times do investments << 0 end
     self.cashflow.each_with_index do |cash, index|
       cash_tracker += cash
       if cash_tracker < 0
