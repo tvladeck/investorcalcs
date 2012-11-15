@@ -20,24 +20,24 @@ class Simulation
     @initial_cash         = options[:initial_cash] || 50_000
   end
 
-  def investment_percentages
+  def investment_percentages(annual = true)
     invs = self.investments
     vals = self.valuations
     inv_vals = {}
     invs.map do |month, amount|
       inv_vals[month] = amount.to_f / vals[month]
     end
-    inv_vals
+    annual ? convert_to_annual(inv_vals) : inv_vals
   end
 
-  def valuations
+  def valuations(annual = true)
     val = self.revenues.map do |r|
       [r * 12 * @multiple, @min_valuation].max
     end
-    val
+    annual ? convert_to_annual(annual) : val
   end
 
-  def investments
+  def investments(annual = true)
     # simply returns a vector of when investments are taken
     cash_tracker = @initial_cash + @init_investment
     investments = {}
@@ -50,7 +50,7 @@ class Simulation
         cash_tracker += inv_amnt
       end
     end
-    investments
+    annual ? convert_to_annual(investments) : investments
   end
 
   def calculate_investment(index, months, vector)
@@ -77,6 +77,15 @@ class Simulation
       inv = 0
     end
     inv
+  end
+
+  def convert_to_annual(ary)
+    len = ary.length
+    rem = len % 12
+    idx = len / 12
+    ret = idx.times.map { |i| ary[i..(i+11)].reduce(:+) }
+    ret << ary[(len-rem)..len].reduce(:+)
+    ret
   end
 
 end
