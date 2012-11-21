@@ -20,6 +20,65 @@ class Simulation
     @initial_cash         = options[:initial_cash] || 50_000
   end
 
+  def cash_position
+    cashflow = self.cashflow
+    investments = self.investments
+    months = cashflow.length
+    cash = Array.new(months)
+    totalcash = @init_investment + @initial_cash
+    months.times do |m|
+      totalcash += cashflow[m]
+      if !investments[m].nil?
+        totalcash += investments[m]
+      end
+      cash[m] = totalcash
+    end
+    cash
+  end
+
+  def investor_returns
+    # returns a hash of the form:
+    # month: { irr: irr, percentages: array }
+    months = self.cashflow.length
+    investments = self.investments
+    percentages = self.investment_percentages
+    valuations = self.valuations
+    inv_months = investments.keys.sort
+    returns = {}
+    percentages.each do |m, p|
+      inv_valuations = []
+      current_percentage = p
+      (m..(months-1)).each do |i|
+        if !percentages[i].nil?
+          current_percentage = current_percentage * (1 - percentages[i])
+        end
+        inv_valuations << current_percentage # * valuations[i]
+      end
+     # inv_valuations.each_with_index do |val, idx|
+     #   idx != 0 ? inv_valuations[idx] = val - inv_valuations[idx-1] : inv_valuations[idx] = 0
+     # end
+      returns[m] = inv_valuations
+    end
+    returns
+  end
+
+  def final_investment_percentages
+    # calculates the percentage of the company each investor
+    # group (keyed by month) owns at the end of the analysis
+    # period
+    months = self.investment_percentages.keys.sort.reverse
+    snapshot_percentages = self.investment_percentages
+    company_available = 1
+    final_shares = {}
+    months.each do |m|
+      period_share = snapshot_percentages[m]
+      final_share = company_available * period_share
+      final_shares[m] = final_share
+      company_available -= final_share
+    end
+    final_shares
+  end
+
   def investment_percentages
     invs = self.investments
     vals = self.valuations
@@ -84,7 +143,9 @@ class Simulation
     rem = len % 12
     idx = len / 12
     ret = idx.times.map { |i| ary[i..(i+11)].reduce(:+) }
-    ret << ary[(len-rem)..len].reduce(:+)
+    if rem != 0
+      ret << ary[(len-rem)..len].reduce(:+)
+    end
     ret
   end
 
