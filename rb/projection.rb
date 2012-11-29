@@ -158,7 +158,11 @@ class Projection
     stream = contracts[:revenues]
     stream[0] -= (contracts[:capex][0] + full_cost)
     monthly_irr = irr(stream)
-    annual_irr = (1 + monthly_irr)**12 - 1
+    if !monthly_irr.class == String
+      annual_irr = (1 + monthly_irr)**12 - 1
+    else
+      annual_irr = monthly_irr
+    end
     { :annual_irr => annual_irr, :stream => stream }
   end
 

@@ -14,6 +14,9 @@ module Finance
     lower = 0
     result = 1
     while result.abs > 0.1
+      if npv(upper, payments) < 0 && npv(lower, payments) < 0
+        return "irr less than 0"
+      end
       middle = (upper + lower) / 2.0
       result = npv(middle, payments)
       if result < 0
