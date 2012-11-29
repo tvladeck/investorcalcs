@@ -1,4 +1,8 @@
+load "finance.rb"
+load "simulation.rb"
+
 class Projection
+  include Finance
 
   def initialize(options = {})
 ## Args:
@@ -145,6 +149,20 @@ class Projection
     result = { :capex => capex, :revenues => revenue_stream }
     result
   end
+
+  def fully_loaded_returns(months)
+    # calculates the IRR of a given salesperson
+    # with fully loaded costs added on
+    full_cost = (@sales_sal + @ops_sal * (1.0 / @sales_to_ops)) * (1 + @opex_ratio)
+    contracts = simulate_deals @deals_per_sales, months
+    stream = contracts[:revenues]
+    stream[0] -= (contracts[:capex][0] + full_cost)
+    monthly_irr = irr(stream)
+    annual_irr = (1 + monthly_irr)**12 - 1
+    { :annual_irr => annual_irr, :stream => stream }
+  end
+
+
 
   def contract_stream(months)
     fee                 = @upfront_cost / @payback_months

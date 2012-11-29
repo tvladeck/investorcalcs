@@ -39,12 +39,19 @@ class Simulation
   def investor_returns
     # returns a hash of the form:
     # month: { irr: irr, percentages: array }
-    months = self.cashflow.length
+    months      = self.cashflow.length
     investments = self.investments
     percentages = self.investment_percentages
-    valuations = self.valuations
-    inv_months = investments.keys.sort
+    valuations  = self.valuations
+    inv_months  = investments.keys.sort
     returns = {}
+
+    # this loop runs for each investor
+    # and first calculates the percentage of the company that she owns in each
+    # month that she's involved.
+    # then it takes the valuation of the company at that point, and calculates
+    # the value of her investment.
+    # finally, it 
     percentages.each do |m, p|
       inv_valuations = []
       current_percentage = p
@@ -54,7 +61,11 @@ class Simulation
         end
         inv_valuations << current_percentage # * valuations[i]
       end
-     # inv_valuations.each_with_index do |val, idx|
+
+      # need to make a copy as we are updating the array and using values that
+      # have already been updated (because we are subtracting the value of 
+      inv_vals = inv_valuations
+     # inv_vals.each_with_index do |val, idx|
      #   idx != 0 ? inv_valuations[idx] = val - inv_valuations[idx-1] : inv_valuations[idx] = 0
      # end
       returns[m] = inv_valuations
