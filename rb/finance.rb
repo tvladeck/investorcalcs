@@ -1,5 +1,8 @@
 module Finance
 
+  class NegativeIRRException < Exception
+  end
+
   def npv(discount, payments)
     sum = 0
     payments.each_with_index do |x, i|
@@ -15,7 +18,7 @@ module Finance
     result = 1
     while result.abs > 0.1
       if npv(upper, payments) < 0 && npv(lower, payments) < 0
-        return "irr less than 0"
+        raise NegativeIRRException
       end
       middle = (upper + lower) / 2.0
       result = npv(middle, payments)
